@@ -178,6 +178,7 @@ motor_step_loop
 	movwf	COUNTER
 motor_revolution_loop
 
+; do motor 1
 	movlw	B'00001000'
 	movwf	d1
 
@@ -200,17 +201,77 @@ motor_cont1
 skip_motor1
 
 ; do motor 2
+	movlw	B'00001000'
+	movwf	d2
+
+	movfw	STPMV2
+	addlw	0x00
+	btfsc	STATUS,Z    
+	goto	skip_motor2 	; count for this motor as reached zero, do not move
+
+	btfsc	STPMD2, DIR     ; check direction
+	goto	motor_forward2	
+	movfw	COUNTER
+	call	StepperReverse
+	goto	motor_cont2
+motor_forward2
+	movfw	COUNTER
+	call	StepperForward
+
+motor_cont2
+	movwf	d2
+skip_motor2
+
 ; do motor 3
+	movlw	B'00001000'
+	movwf	d3
+
+	movfw	STPMV3
+	addlw	0x00
+	btfsc	STATUS,Z    
+	goto	skip_motor3 	; count for this motor as reached zero, do not move
+
+	btfsc	STPMD3, DIR     ; check direction
+	goto	motor_forward3	
+	movfw	COUNTER
+	call	StepperReverse
+	goto	motor_cont3
+motor_forward3
+	movfw	COUNTER
+	call	StepperForward
+
+motor_cont3
+	movwf	d3
+skip_motor3
 
 
-	movfw	d1
+; combine d2 and d2 
+	rlf		d2
+	rlf		d2
+	rlf		d2
+	rlf		d2
+	movfw	d2
+	iorwf	d1,w
+
+;	movfw	d1
 	banksel	PORTB
 	movwf	PORTB
 
-	; 2 @ 12V
-	movlw	2
-	call	delay
+; shift left d3 so it'll be at d4-d7
+	rlf		d3	
+	rlf		d3
+	rlf		d3
+	rlf		d3
+	movfw	d3
+	banksel	PORTD
+	movwf	PORTD
 
+	; 2 @ 12V
+	; 3 @ 12V stronger
+	; slow = stronger?
+	movlw	3
+	call	delay
+  
 	decfsz	COUNTER
 	goto motor_revolution_loop
 
@@ -223,9 +284,26 @@ skip_motor1
 	decf	STPMV1,f
 	bsf		MLOOP
 skip_check1
-; do motor 2
-; do motor 3
 
+; do motor check 2
+	movfw	STPMV2
+	addlw	0x00
+	btfsc	STATUS,Z
+	goto    skip_check2  
+
+	decf	STPMV2,f
+	bsf		MLOOP
+skip_check2
+
+; do motor check 3
+	movfw	STPMV3
+	addlw	0x00
+	btfsc	STATUS,Z
+	goto    skip_check3  
+
+	decf	STPMV3,f
+	bsf		MLOOP
+skip_check3
 	
 	btfsc	MLOOP
 	goto 	motor_step_loop
