@@ -2,7 +2,7 @@
 MagicCookie={0b13fe8c-dfe0-40eb-8900-6712719559a7}
 Version=1.0
 [File000]
-Location=F:\Projects\Microchip\USART\UARTInt.o
+Location=F:\Projects\Microchip\pic_proto\UARTInt.o
 Folder=Intermediary
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -15,7 +15,7 @@ ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File001]
-Location=F:\Projects\Microchip\USART\UARTInt.err
+Location=F:\Projects\Microchip\pic_proto\UARTInt.err
 Folder=Intermediary
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -28,7 +28,7 @@ ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File002]
-Location=F:\Projects\Microchip\USART\main.o
+Location=F:\Projects\Microchip\pic_proto\main.o
 Folder=Intermediary
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -41,7 +41,7 @@ ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File003]
-Location=F:\Projects\Microchip\USART\main.err
+Location=F:\Projects\Microchip\pic_proto\main.err
 Folder=Intermediary
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -54,7 +54,7 @@ ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File004]
-Location=F:\Projects\Microchip\USART\UARTInt.lst
+Location=F:\Projects\Microchip\pic_proto\UARTInt.lst
 Folder=Output
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -67,7 +67,7 @@ ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File005]
-Location=F:\Projects\Microchip\USART\main.lst
+Location=F:\Projects\Microchip\pic_proto\main.lst
 Folder=Output
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -80,7 +80,7 @@ ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File006]
-Location=F:\Projects\Microchip\USART\USART_test.cof
+Location=F:\Projects\Microchip\pic_proto\USART_test.cof
 Folder=Output
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
@@ -93,7 +93,7 @@ ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /
 TraceCmdString=
 DebugOptions=/z__MPLAB_DEBUG=1
 [File007]
-Location=F:\Projects\Microchip\USART\USART_test.hex
+Location=F:\Projects\Microchip\pic_proto\USART_test.hex
 Folder=Output
 DeviceName=PIC16F877A
 LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}

@@ -14,6 +14,9 @@
         include "UARTInt.inc"
 
 
+#define DIR 00  ; direction bit
+#define MLOOP MOTOR_STATUS,00 ; loop active, if unset, exit loop 
+
 UARTTstRAM      UDATA
 ISR_STAT    	RES 02			;For saving STATUS value
 #define     ISR_PCLATH	ISR_STAT+1	;For saving PCLATH
@@ -21,20 +24,23 @@ ISR_STAT    	RES 02			;For saving STATUS value
 ; shared RAM
 UARTTstShr	 	UDATA_SHR
 ISR_W	    	RES 01					;For Saving W reg. value
+
 STPMV1			RES 01					;For Stepper motor 1 value command
+STPMD1			RES 01
 STPMV2			RES 01	
+STPMD2			RES 01
 STPMV3			RES 01
+STPMD3			RES 01
+
 OVERFLOW		RES 01					; 1 char overflow, reading an extra byte, don't know why.
-STPM1			RES 01					;For Stepper motor 1 current bit
-STPM2			RES 01	
-STPM3			RES 01
-STPMDIR			RES 01					;Durrent direction of stepper 1=fwd, 0=rev bit1=m1, bit2=m2, bit3=m3
 tmp1			RES 01					;Temp vars for nibble shifting
 tmp2			RES 01
 d1				RES 01					;Delay var
 d2				RES 01					
 d3				RES 01					
-d4				RES 01					
+d4				RES 01	
+MOTOR_STATUS	RES 01				
+COUNTER			RES 01
 
 STARThere       CODE    0x00
 	goto    START
@@ -80,6 +86,24 @@ ISRoutine
 
 
 Main    CODE
+	goto START
+
+StepperForward
+	andlw	B'00000011'
+	addwf	PCL,f
+	retlw	B'00000001'
+	retlw   B'00000010'
+	retlw	B'00000100'
+	retlw   B'00001000'
+StepperReverse
+	andlw	B'00000011'
+	addwf	PCL,f
+	retlw	B'00000100'
+	retlw   B'00000010'
+	retlw	B'00000001'
+	retlw   B'00001000'
+
+
 
 START
         ;Define the required TRIS and PORT settings here
@@ -116,26 +140,7 @@ START
 	call    UARTIntPutCh
 	movlw   'Y'
 	call    UARTIntPutCh
-	
 
-; init motor vars
-	movlw	1
-	movwf	STPM1
-	movwf	STPM2
-	movwf	STPM3
-	movlw	0xFF
-	movwf	STPMV1
-	movwf	STPMV2
-	movwf	STPMV3
-
-	movlw	b'00001000'
-	movwf	STPM1
-
-	movlw	0
-	movwf	STPMDIR
-	call  	run_motors
-
-	
 
 ;Change the pre-claculated baudrate, If required
 ;        mSetUARTBaud    .9600
@@ -148,7 +153,7 @@ WaitRxData
 	goto    WaitRxData
 
 	movlw	0
-	movwf	STPMDIR
+	movwf	tmp2
 
 ;	setup FSR
 
@@ -157,70 +162,78 @@ ReadAgain
 	Pagesel UARTIntGetCh
 	call    UARTIntGetCh
 
-	; working 
-;	movwf	tmp1
-;
-;;	movfw	STPM1
-;;	call	UARTIntPutCh
-;
-;	;call	store_chars
-;	movlw	STPMV1
-;	addwf	STPMDIR,w
-;	movwf	FSR
-;	movfw	tmp1
-;	movwf	INDF
-;	incf	STPMDIR, f
-	; until here, replaced with call (2 lines) below
 	Pagesel	save_char
 	call 	save_char
 
-;	incf	FSR,f			;NB: if the read buffer is more that 3, this will 
-							;overwrite other vars
 
-;;check if Tx buffer is empty
-;        banksel vUARTIntStatus
-;WaitForTxBufEmpty
-;        btfsc   vUARTIntStatus,UARTIntTxBufFul
-;        goto    WaitForTxBufEmpty
-;
-;;Echo back the received data                
-;        Pagesel UARTIntPutCh
-;        call    UARTIntPutCh
-;
-;Check if Rx Buffer is empty. If not keep reading it.
 	banksel vUARTIntStatus
 	btfss   vUARTIntStatus,UARTIntRxBufEmpty
 	goto    ReadAgain
 
 
-
 motor_step_loop
-	bcf		STPMDIR, 3			; clear it so, if none of the motor_step calls sets it, exit loop
+	bcf 	MLOOP
 
-	movlw	STPMV3
-	call	motor_step
+	movlw	0xC8
+	movwf	COUNTER
+motor_revolution_loop
 
-	movlw	STPMV2
-	call	motor_step
+	movlw	B'00001000'
+	movwf	d1
 
-	movlw	STPMV1
-	call	motor_step
-	
-	call	run_motors
+	movfw	STPMV1
+	addlw	0x00
+	btfsc	STATUS,Z    
+	goto	skip_motor1 	; count for this motor as reached zero, do not move
 
-	btfss	STPMDIR, 3			; if set, skip next instruction
-	goto	motor_step_loop_end
+	btfsc	STPMD1, DIR     ; check direction
+	goto	motor_forward1	
+	movfw	COUNTER
+	call	StepperReverse
+	goto	motor_cont1
+motor_forward1
+	movfw	COUNTER
+	call	StepperForward
 
-	movlw	3
+motor_cont1
+	movwf	d1
+skip_motor1
+
+; do motor 2
+; do motor 3
+
+
+	movfw	d1
+	banksel	PORTB
+	movwf	PORTB
+
+	; 2 @ 12V
+	movlw	2
 	call	delay
 
-	goto	motor_step_loop
-motor_step_loop_end
+	decfsz	COUNTER
+	goto motor_revolution_loop
 
+; check: if motor counters are not zero, dec
+	movfw	STPMV1
+	addlw	0x00
+	btfsc	STATUS,Z
+	goto    skip_check1  
+
+	decf	STPMV1,f
+	bsf		MLOOP
+skip_check1
+; do motor 2
+; do motor 3
+
+	
+	btfsc	MLOOP
+	goto 	motor_step_loop
 
 WaitForTxBufEmpty
 	btfsc   vUARTIntStatus,UARTIntTxBufFul
 	goto    WaitForTxBufEmpty
+
 	;Display OK
 	movlw   'O'
 	Pagesel UARTIntPutCh
@@ -230,115 +243,28 @@ WaitForTxBufEmpty
 
 	goto    WaitRxData
 	
-	return	
+;	return	
 	
 save_char
 	movwf	tmp1  ; save current char
 
 	; have we exceeded the buffer size?
-	movfw	STPMDIR
-	addlw	.255 - UARTINT_RX_BUFFER_SIZE + 1
+	movfw	tmp2
+	addlw	.255 - UARTINT_RX_BUFFER_SIZE + .1
 	;.253 ; if w is less than 3 ([.255 - 3] + 1)
 	btfsc	STATUS, C
 	goto	save_chars_skip  ; yes, ignore char
 
 
 	movlw	STPMV1           ; put address of STPMV1 into w
-	addwf	STPMDIR,w        ; STPMDIR contains the offset (0..2) 
+	addwf	tmp2,w           ; tmp2 contains the offset (0..2) 
 	movwf	FSR              ; set indirect address register to above result
 	movfw	tmp1             ; retrieve value to store into w
 	movwf	INDF             ; save w into current location pointed by indrect register
-	incf	STPMDIR, f       ; move to next location
+	incf	tmp2, f          ; move to next location
 	return 
 save_chars_skip
 	movfw	tmp1
-	return
-
-run_motors
-	; combine m1 & m2, with m2 on higher nibble
-	movfw	STPM2
-	movwf	tmp1         ; use temp var used by nibble shift
-	bcf		STATUS, C    ; clear carry flag
-	rlf		tmp1, f      ; shift left tmp1 4x (move to higher nibble)
-	rlf		tmp1, f
-	rlf		tmp1, f
-	rlf		tmp1, f
-	movlw	0xF0         
-	andwf	tmp1, w      
-	iorwf	STPM1, w    ; inclusive-or m1 & m2 (after m2 is shifted)
-
-	banksel PORTB
-	movwf	PORTB
-
-	return
-
-motor_step
-	movwf	FSR         ; w is set by caller to location of motor step counts
-	movfw	INDF        ; read 1 byte into w
-	movwf	tmp1		; (put it into tmp1) read char from serial port
-;	Pagesel	UARTIntPutCh
-;	call	UARTIntPutCh
-	movlw	0x7F		; ignore MSB
-	andwf	tmp1, w     
-	btfsc	STATUS, Z   ; checking for zero
-	return				; count reached zero, do nothing
-	
-	bsf		STPMDIR, 3	; set status to not done
-	decf	INDF, f		; else dec, count
-
-;	movfw	INDF
-;	Pagesel	UARTIntPutCh
-;	call	UARTIntPutCh
-
-	movlw	STPM1 - STPMV1
-	addwf	FSR, f
-	movfw	INDF		; w is the current bit pattern for stepper
-
-	btfsc	tmp1, 7
-	goto	motor_step_fwd
-
-	call	step_reverse
-	goto    motor_step_cont
-motor_step_fwd
-	call	step_forward
-motor_step_cont
-	movwf	INDF
-	return
-
-
-step_forward
-	goto shift_left_nibble
-
-step_reverse
-	goto shift_right_nibble
-
-shift_left_nibble
-	movwf	tmp2
-	movwf	tmp1
-	bcf		STATUS,C
-	btfsc	tmp1, 4
-	bsf		STATUS,C
-	rlf		tmp1, f
-	movlw	0x0F
-	andwf	tmp1, f
-	movlw	0xF0
-	andwf	tmp2, w
-	iorwf	tmp1, w
-	return
-
-shift_right_nibble
-	movwf	tmp2
-	movwf	tmp1
-	movlw	0x0F
-	andwf	tmp1, f
-	btfsc	tmp1, 0
-	bsf		tmp1, 4	
-;	bcf		STATUS, C
-	rrf		tmp1, f
-
-	movlw	0xF0
-	andwf	tmp2,w
-	iorwf	tmp1,w
 	return
 
 ldelay
