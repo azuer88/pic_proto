@@ -14,7 +14,11 @@
         include "UARTInt.inc"
 
 
-#define DIR 00  ; direction bit
+
+#define DIR_M1 STPMDR,00  ; direction for motor1
+#define DIR_M2 STPMDR,01  ; direction for motor1
+#define DIR_M3 STPMDR,02  ; direction for motor1
+
 #define MLOOP MOTOR_STATUS,00 ; loop active, if unset, exit loop 
 
 UARTTstRAM      UDATA
@@ -25,14 +29,13 @@ ISR_STAT    	RES 02			;For saving STATUS value
 UARTTstShr	 	UDATA_SHR
 ISR_W	    	RES 01					;For Saving W reg. value
 
+STPDLY			RES 01
+STPMDR			RES 01
 STPMV1			RES 01					;For Stepper motor 1 value command
-STPMD1			RES 01
 STPMV2			RES 01	
-STPMD2			RES 01
 STPMV3			RES 01
-STPMD3			RES 01
 
-OVERFLOW		RES 01					; 1 char overflow, reading an extra byte, don't know why.
+;OVERFLOW		RES 01					; 1 char overflow, reading an extra byte, don't know why.
 tmp1			RES 01					;Temp vars for nibble shifting
 tmp2			RES 01
 d1				RES 01					;Delay var
@@ -43,6 +46,7 @@ MOTOR_STATUS	RES 01
 COUNTER			RES 01
 
 STARThere       CODE    0x00
+	;pagesel START
 	goto    START
 
 
@@ -187,7 +191,7 @@ motor_revolution_loop
 	btfsc	STATUS,Z    
 	goto	skip_motor1 	; count for this motor as reached zero, do not move
 
-	btfsc	STPMD1, DIR     ; check direction
+	btfsc	DIR_M1  		; check direction
 	goto	motor_forward1	
 	movfw	COUNTER
 	call	StepperReverse
@@ -209,7 +213,7 @@ skip_motor1
 	btfsc	STATUS,Z    
 	goto	skip_motor2 	; count for this motor as reached zero, do not move
 
-	btfsc	STPMD2, DIR     ; check direction
+	btfsc	DIR_M2			; check direction
 	goto	motor_forward2	
 	movfw	COUNTER
 	call	StepperReverse
@@ -231,7 +235,7 @@ skip_motor2
 	btfsc	STATUS,Z    
 	goto	skip_motor3 	; count for this motor as reached zero, do not move
 
-	btfsc	STPMD3, DIR     ; check direction
+	btfsc	DIR_M3     		; check direction
 	goto	motor_forward3	
 	movfw	COUNTER
 	call	StepperReverse
@@ -246,10 +250,10 @@ skip_motor3
 
 
 ; combine d2 and d2 
-	rlf		d2
-	rlf		d2
-	rlf		d2
-	rlf		d2
+	rlf		d2,f
+	rlf		d2,f
+	rlf		d2,f
+	rlf		d2,f
 	movfw	d2
 	iorwf	d1,w
 
@@ -258,10 +262,10 @@ skip_motor3
 	movwf	PORTB
 
 ; shift left d3 so it'll be at d4-d7
-	rlf		d3	
-	rlf		d3
-	rlf		d3
-	rlf		d3
+	rlf		d3,f	
+	rlf		d3,f
+	rlf		d3,f
+	rlf		d3,f
 	movfw	d3
 	banksel	PORTD
 	movwf	PORTD
@@ -269,10 +273,12 @@ skip_motor3
 	; 2 @ 12V
 	; 3 @ 12V stronger
 	; slow = stronger?
-	movlw	3
+	; movlw	3
+	; use the delay sent in STPDLY
+	movfw	STPDLY
 	call	delay
   
-	decfsz	COUNTER
+	decfsz	COUNTER,f
 	goto motor_revolution_loop
 
 ; check: if motor counters are not zero, dec
@@ -334,7 +340,7 @@ save_char
 	goto	save_chars_skip  ; yes, ignore char
 
 
-	movlw	STPMV1           ; put address of STPMV1 into w
+	movlw	STPDLY           ; put address of first var into w
 	addwf	tmp2,w           ; tmp2 contains the offset (0..2) 
 	movwf	FSR              ; set indirect address register to above result
 	movfw	tmp1             ; retrieve value to store into w
