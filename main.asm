@@ -248,7 +248,6 @@ motor_cont3
 	movwf	d3
 skip_motor3
 
-
 ; combine d2 and d2 
 	rlf		d2,f
 	rlf		d2,f
@@ -277,6 +276,8 @@ skip_motor3
 	; use the delay sent in STPDLY
 	movfw	STPDLY
 	call	delay
+
+
   
 	decfsz	COUNTER,f
 	goto motor_revolution_loop
@@ -362,7 +363,7 @@ ldelay_loop
 delay
 	movwf	d4
 delay_loop
-	call	SleepM
+	call	SleepMH
 	decfsz	d4, f
 	goto delay_loop
 	return
@@ -420,4 +421,24 @@ SleepM_0
 			;4 cycles (including call)
 	return
 
+
+
+SleepMH
+			;93 cycles
+	movlw	0x5D
+	movwf	d1
+	movlw	0x01
+	movwf	d2
+SleepMH_0
+	decfsz	d1, f
+	goto	$+2
+	decfsz	d2, f
+	goto	SleepMH_0
+
+			;3 cycles
+	goto	$+1
+	nop
+
+			;4 cycles (including call)
+	return
         END
