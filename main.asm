@@ -12,8 +12,9 @@
         include <P16f877A.INC>
 
         include "UARTInt.inc"
+		include "Timer0Int.inc"
 
-
+__CONFIG	_WDT_OFF & _XT_OSC & _LVP_OFF & _BOREN_OFF & _CP_OFF & _DEBUG_OFF & _CPD_OFF
 
 #define DIR_M1 STPMDR,00  ; direction for motor1
 #define DIR_M2 STPMDR,01  ; direction for motor1
@@ -45,6 +46,7 @@ d4				RES 01
 MOTOR_STATUS	RES 01				
 COUNTER			RES 01
 
+
 STARThere       CODE    0x00
 	;pagesel START
 	goto    START
@@ -70,10 +72,14 @@ ISRoutine
 	movf	PCLATH,W
 	movwf	ISR_PCLATH	     ;put PCLATH into ISR_PCLATH
 
+	pagesel	Timer0IntISR
+	call	Timer0IntISR
+	
+;default_intr
 ;call the interrupt function
 	pagesel     UARTIntISR
 	call	    UARTIntISR	     ;Call general purpose RTC interrupt service routine
-
+;restore_intr
 ;restore context
 	banksel ISR_STAT
 	movf	ISR_PCLATH,W	    ;put ISR_PCLATH back into PCLATH
@@ -83,6 +89,7 @@ ISRoutine
 	swapf	ISR_W,f 	    ;swap ISR_W into itself
 	swapf	ISR_W,W 	    ;swap ISR_W into Wreg.
 	retfie
+
 
 
 
@@ -112,9 +119,6 @@ StepperReverse
 START
         ;Define the required TRIS and PORT settings here
         
-;Make sure that UART pins are defined as i/p
-	pagesel UARTIntInit
-	call    UARTIntInit
 	
 ; initialize ports
 	bcf 	STATUS,IRP			
@@ -134,6 +138,14 @@ START
  	clrf	PORTB
  	clrf	PORTC
 	clrf	PORTD
+
+
+;Make sure that UART pins are defined as i/p
+	pagesel UARTIntInit
+	call    UARTIntInit
+
+	pagesel Timer0IntInit
+	call	Timer0IntInit
 
 ;Display RDY.V
 
@@ -173,6 +185,14 @@ ReadAgain
 	banksel vUARTIntStatus
 	btfss   vUARTIntStatus,UARTIntRxBufEmpty
 	goto    ReadAgain
+
+	movfw	STPDLY
+	banksel timer0Delay
+	movwf	timer0Delay
+
+	bsf		INTCON, GIE
+
+	goto    WaitForTxBufEmpty
 
 
 motor_step_loop
@@ -442,3 +462,4 @@ SleepMH_0
 			;4 cycles (including call)
 	return
         END
+

@@ -9,7 +9,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -22,7 +22,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -35,7 +35,7 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
@@ -48,12 +48,38 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
 [File004]
+Location=F:\Projects\Microchip\pic_proto\Timer0Int.o
+Folder=Intermediary
+DeviceName=PIC16F877A
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File005]
+Location=F:\Projects\Microchip\pic_proto\Timer0Int.err
+Folder=Intermediary
+DeviceName=PIC16F877A
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File006]
 Location=F:\Projects\Microchip\pic_proto\UARTInt.lst
 Folder=Output
 DeviceName=PIC16F877A
@@ -61,12 +87,12 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
-[File005]
+[File007]
 Location=F:\Projects\Microchip\pic_proto\main.lst
 Folder=Output
 DeviceName=PIC16F877A
@@ -74,12 +100,25 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
 ToolArgsString=
 TraceCmdString=
 DebugOptions=/d__DEBUG=1
-[File006]
+[File008]
+Location=F:\Projects\Microchip\pic_proto\Timer0Int.lst
+Folder=Output
+DeviceName=PIC16F877A
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={49D3CA3F-D9A3-4518-9943-226A347E8CC7}
+LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\MPASMWIN.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=
+TraceCmdString=
+DebugOptions=/d__DEBUG=1
+[File009]
 Location=F:\Projects\Microchip\pic_proto\USART_test.cof
 Folder=Output
 DeviceName=PIC16F877A
@@ -87,12 +126,12 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\mplink.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
-ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /W
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /w /o"$(BINDIR_)$(TARGETBASE).cof"
 TraceCmdString=
 DebugOptions=/z__MPLAB_DEBUG=1
-[File007]
+[File010]
 Location=F:\Projects\Microchip\pic_proto\USART_test.hex
 Folder=Output
 DeviceName=PIC16F877A
@@ -100,9 +139,22 @@ LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
 LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
 LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\mplink.exe
 PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
-SOLK=<src>|UARTInt.asm|main.asm||<obj>||<lib>||<lkr>||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
 SuiteArgsString=generate-relocatable-code
-ToolArgsString=/o"$(BINDIR_)$(TARGETBASE).cof" /M"$(BINDIR_)$(TARGETBASE).map" /W
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /w /o"$(BINDIR_)$(TARGETBASE).cof"
+TraceCmdString=
+DebugOptions=/z__MPLAB_DEBUG=1
+[File011]
+Location=F:\Projects\Microchip\pic_proto\USART_test.map
+Folder=Output
+DeviceName=PIC16F877A
+LanguageToolSuiteID={6B3DAA78-59C1-46DD-B6AA-DBDAE4E06484}
+LanguageToolID={96C98149-AA1B-4CF9-B967-FAE79CAB663C}
+LanguageToolLocation=I:\Program Files\Microchip\MPASM Suite\mplink.exe
+PPAD=$(BINDIR)||$(TMPDIR)||$(AINDIR)||$(INCDIR)||$(LIBDIR)||$(LKRDIR)||
+SOLK=<src>|UARTInt.asm|main.asm|Timer0Int.asm||<obj>||<lib>||<lkr>||
+SuiteArgsString=generate-relocatable-code
+ToolArgsString=/m"$(BINDIR_)$(TARGETBASE).map" /w /o"$(BINDIR_)$(TARGETBASE).cof"
 TraceCmdString=
 DebugOptions=/z__MPLAB_DEBUG=1
 [TOOL_LOC_STAMPS]
